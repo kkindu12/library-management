@@ -3,38 +3,49 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
+// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add EF Core + SQLite
-builder.Services.AddDbContext<LibraryContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Enable CORS for frontend communication
+// Enable CORS for frontend dev (adjust origin as needed)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()
+              .WithOrigins("http://localhost:5173"); // Vite dev server
+    });
 });
+
+// Configure EF Core with SQLite (use AppDbContext which is defined in Data/AppDbContext.cs)
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=library.db"));
 
 var app = builder.Build();
 
-// Create DB if not exists
+// Apply migrations automatically (optional for development)
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<LibraryContext>();
-    db.Database.EnsureCreated();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
 }
 
-// Configure HTTP pipeline
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll");
+app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
+
+app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();
