@@ -5,16 +5,16 @@ export default function Nav(){
   return (
     <nav className="app-nav" role="navigation">
       <div className="brand">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 6h14v12H4z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-        <div>
-          <div style={{fontSize:14}}>Library</div>
-          <div style={{fontSize:12,color:"var(--muted)"}}>Management </div>
-        </div>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+        <span>Library Management</span>
       </div>
 
       <div className="links">
-        <Link to="/" className="small-muted">Books</Link>
-        <Link to="/add" className="btn">Add Book</Link>
+        <Link to="/">📚 Books</Link>
+        <Link to="/add" className="btn">+ Add Book</Link>
       </div>
     </nav>
   );

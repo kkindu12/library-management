@@ -6,6 +6,7 @@ import { Book } from "../types";
 export default function BookForm(){
   const [book, setBook] = useState<Book>({ title:"", author:"", description:"" });
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = Boolean(id);
@@ -26,20 +27,33 @@ export default function BookForm(){
   }
 
   function onChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>){
-    setBook(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setBook(prev => ({ ...prev, [name]: value }));
+    if(errors[name]) setErrors(prev => ({ ...prev, [name]: "" }));
+  }
+
+  function validate(){
+    const newErrors: {[key: string]: string} = {};
+    if(!book.title.trim()) newErrors.title = "Title is required";
+    if(!book.author.trim()) newErrors.author = "Author is required";
+    return newErrors;
   }
 
   async function onSubmit(e: React.FormEvent){
     e.preventDefault();
-    if(!book.title.trim() || !book.author.trim()){
-      return alert("Title and author are required.");
+    const newErrors = validate();
+    if(Object.keys(newErrors).length > 0){
+      setErrors(newErrors);
+      return;
     }
     setLoading(true);
     try{
       if(isEdit){
         await api.put(`/books/${id}`, book);
+        alert("Book updated successfully!");
       } else {
         await api.post("/books", book);
+        alert("Book added successfully!");
       }
       navigate("/");
     }catch(err){
@@ -49,29 +63,62 @@ export default function BookForm(){
   }
 
   return (
-    <div className="container">
-      <h1>{isEdit ? "Edit" : "Add"} Book</h1>
-      <form className="form" onSubmit={onSubmit}>
-        <label>
-          Title
-          <input name="title" value={book.title} onChange={onChange} type="text" required />
-        </label>
-
-        <label>
-          Author
-          <input name="author" value={book.author} onChange={onChange} type="text" required />
-        </label>
-
-        <label>
-          Description
-          <textarea name="description" value={book.description} onChange={onChange} />
-        </label>
-
-        <div style={{display:"flex", gap:".6rem", justifyContent:"flex-end", marginTop:8}}>
-          <button type="button" className="icon-btn" onClick={()=>navigate("/")}>Cancel</button>
-          <button type="submit" className="btn-primary" disabled={loading}>{loading ? "Saving..." : "Save"}</button>
+    <main>
+      <div className="container">
+        <div className="page-header">
+          <h1>{isEdit ? "Edit Book" : "Add New Book"}</h1>
+          <p className="small-muted">{isEdit ? "Update book details" : "Add a new book to your library"}</p>
         </div>
-      </form>
-    </div>
+
+        <form className="form" onSubmit={onSubmit}>
+          <div className="form-group">
+            <label>
+              Title <span className="required">*</span>
+              <input 
+                name="title" 
+                value={book.title} 
+                onChange={onChange} 
+                type="text" 
+                placeholder="Enter book title"
+                required 
+              />
+            </label>
+            {errors.title && <span style={{color: "var(--danger)", fontSize: "0.85rem"}}>{errors.title}</span>}
+          </div>
+
+          <div className="form-group">
+            <label>
+              Author <span className="required">*</span>
+              <input 
+                name="author" 
+                value={book.author} 
+                onChange={onChange} 
+                type="text" 
+                placeholder="Enter author name"
+                required 
+              />
+            </label>
+            {errors.author && <span style={{color: "var(--danger)", fontSize: "0.85rem"}}>{errors.author}</span>}
+          </div>
+
+          <div className="form-group">
+            <label>
+              Description
+              <textarea 
+                name="description" 
+                value={book.description} 
+                onChange={onChange}
+                placeholder="Enter book description (optional)"
+              />
+            </label>
+          </div>
+
+          <div className="form-actions">
+            <button type="button" className="btn btn-secondary" onClick={()=>navigate("/")}>Cancel</button>
+            <button type="submit" className="btn" disabled={loading}>{loading ? "Saving..." : isEdit ? "Update Book" : "Add Book"}</button>
+          </div>
+        </form>
+      </div>
+    </main>
   );
 }
