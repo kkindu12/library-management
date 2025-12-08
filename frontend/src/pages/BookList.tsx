@@ -37,7 +37,7 @@ export default function BookList(){
   return (
     <div className="container">
       <h1>Books</h1>
-      <p className="small-muted">Manage your library — create, edit and remove books.</p>
+      <p className="small-muted">Manage your library — You can create, edit and remove books.</p>
 
       {loading ? <p className="small-muted">Loading…</p> : (
         <>
