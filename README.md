@@ -1,7 +1,23 @@
 # 📚 Library Management System  
 A full-stack application built with **C# .NET 10**, **React + TypeScript**, and **SQLite**.  
 This project demonstrates CRUD operations, API development, UI design, and complete system integration.
+
 ![.NET](https://img.shields.io/badge/.NET-10.0-blue)
 ![React](https://img.shields.io/badge/React-19-blue)
 ![SQLite](https://img.shields.io/badge/SQLite-3-lightgrey)
 ![License](https://img.shields.io/badge/License-MIT-green)
+
+## 📑 Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Screenshots](#screenshots)
+- [Backend Setup](#backend-setup)
+- [Frontend Setup](#frontend-setup)
+- [API Endpoints](#api-endpoints)
+- [Folder Structure](#folder-structure)
+- [How to Run](#how-to-run)
+- [Challenges](#challenges)
+- [Future Enhancements](#future-enhancements)
+- [Author](#author)
